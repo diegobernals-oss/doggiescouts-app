@@ -1,0 +1,6 @@
+{
+  "name": "DoggieScout Virtual Card",
+  "description": "High-impact virtual business card, service quoter, VIP ticket booking, and AI Assistant for Campus DoggieScouts Guaymaral Bogotá.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
