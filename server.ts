@@ -8,7 +8,6 @@ import mysql from 'mysql2/promise';
 
 dotenv.config();
 
-// Fix seguro de rutas para compatibilidad CommonJS / ES Modules en Hostinger
 const currentFilename = typeof __filename !== 'undefined' 
   ? __filename 
   : (import.meta && import.meta.url ? fileURLToPath(import.meta.url) : '');
@@ -22,7 +21,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Pool de conexión a MySQL utilizando las variables de entorno
+// Configuración del pool de MySQL
 const pool = mysql.createPool({
   host: process.env.DB_HOST || '127.0.0.1',
   user: process.env.DB_USER || 'u787443602_admin',
@@ -34,19 +33,31 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Inicializar la API de Gemini
+// Inicialización de Google Gen AI
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
-// --- ENDPOINTS DE TU APLICACIÓN ---
-
-// Endpoint para guardar tickets VIP
+// Endpoint POST para guardar tickets
 app.post('/api/tickets', async (req, res) => {
   try {
-    const { 
-      id, code, ownerName, email, ownerPhone, dogName, 
-      dogBreed, dogSize, serviceId, serviceName, date, 
-      timeSlot, createdAt, status, vaccinesUpToDate, 
-      allergies, vetContact, feedingHabits 
+    const {
+      id,
+      code,
+      ownerName,
+      email,
+      ownerPhone,
+      dogName,
+      dogBreed,
+      dogSize,
+      serviceId,
+      serviceName,
+      date,
+      timeSlot,
+      createdAt,
+      status,
+      vaccinesUpToDate,
+      allergies,
+      vetContact,
+      feedingHabits
     } = req.body;
 
     const query = `
@@ -59,10 +70,24 @@ app.post('/api/tickets', async (req, res) => {
     `;
 
     await pool.execute(query, [
-      id, code, ownerName, email, ownerPhone, dogName, 
-      dogBreed, dogSize, serviceId, serviceName, date, 
-      timeSlot, createdAt, status, vaccinesUpToDate, 
-      allergies, vetContact, feedingHabits
+      id,
+      code,
+      ownerName,
+      email,
+      ownerPhone,
+      dogName,
+      dogBreed,
+      dogSize,
+      serviceId,
+      serviceName,
+      date,
+      timeSlot,
+      createdAt,
+      status,
+      vaccinesUpToDate,
+      allergies,
+      vetContact,
+      feedingHabits
     ]);
 
     res.json({ success: true, message: 'Ticket guardado exitosamente' });
@@ -72,7 +97,7 @@ app.post('/api/tickets', async (req, res) => {
   }
 });
 
-// Endpoint para obtener tickets
+// Endpoint GET para obtener tickets
 app.get('/api/tickets', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM vip_tickets');
@@ -82,18 +107,21 @@ app.get('/api/tickets', async (req, res) => {
   }
 });
 
-// Servir archivos en producción o con Vite en desarrollo
+// Inicio del servidor
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'custom',
+      appType: 'custom'
     });
     app.use(vite.middlewares);
   } else {
-    app.use(express.static(path.join(currentDirname, 'dist')));
+    // CORRECCIÓN: Como server.cjs está dentro de 'dist', 
+    // sirves estáticos directamente desde currentDirname y cargas index.html sin duplicar 'dist'
+    app.use(express.static(currentDirname));
+
     app.get('*', (req, res) => {
-      res.sendFile(path.join(currentDirname, 'dist', 'index.html'));
+      res.sendFile(path.join(currentDirname, 'index.html'));
     });
   }
 
