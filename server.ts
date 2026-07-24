@@ -8,13 +8,8 @@ import mysql from 'mysql2/promise';
 
 dotenv.config();
 
-const currentFilename = typeof __filename !== 'undefined' 
-  ? __filename 
-  : (import.meta && import.meta.url ? fileURLToPath(import.meta.url) : '');
-
-const currentDirname = typeof __dirname !== 'undefined' 
-  ? __dirname 
-  : path.dirname(currentFilename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,24 +35,10 @@ const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 app.post('/api/tickets', async (req, res) => {
   try {
     const {
-      id,
-      code,
-      ownerName,
-      email,
-      ownerPhone,
-      dogName,
-      dogBreed,
-      dogSize,
-      serviceId,
-      serviceName,
-      date,
-      timeSlot,
-      createdAt,
-      status,
-      vaccinesUpToDate,
-      allergies,
-      vetContact,
-      feedingHabits
+      id, code, ownerName, email, ownerPhone, dogName, 
+      dogBreed, dogSize, serviceId, serviceName, date, 
+      timeSlot, createdAt, status, vaccinesUpToDate, 
+      allergies, vetContact, feedingHabits
     } = req.body;
 
     const query = `
@@ -70,24 +51,10 @@ app.post('/api/tickets', async (req, res) => {
     `;
 
     await pool.execute(query, [
-      id,
-      code,
-      ownerName,
-      email,
-      ownerPhone,
-      dogName,
-      dogBreed,
-      dogSize,
-      serviceId,
-      serviceName,
-      date,
-      timeSlot,
-      createdAt,
-      status,
-      vaccinesUpToDate,
-      allergies,
-      vetContact,
-      feedingHabits
+      id, code, ownerName, email, ownerPhone, dogName, 
+      dogBreed, dogSize, serviceId, serviceName, date, 
+      timeSlot, createdAt, status, vaccinesUpToDate, 
+      allergies, vetContact, feedingHabits
     ]);
 
     res.json({ success: true, message: 'Ticket guardado exitosamente' });
@@ -116,12 +83,11 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // CORRECCIÓN DEFINITIVA: Apuntar correctamente a la carpeta 'dist' generada en la compilación
-    const distPath = path.resolve(currentDirname, 'dist');
-    app.use(express.static(distPath));
+    // Apuntar directamente al directorio actual en producción donde se empaqueta dist
+    app.use(express.static(__dirname));
 
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      res.sendFile(path.join(__dirname, 'index.html'));
     });
   }
 
