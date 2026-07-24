@@ -116,12 +116,12 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // CORRECCIÓN: Como server.cjs está dentro de 'dist', 
-    // sirves estáticos directamente desde currentDirname y cargas index.html sin duplicar 'dist'
-    app.use(express.static(currentDirname));
+    // CORRECCIÓN DEFINITIVA: Apuntar correctamente a la carpeta 'dist' generada en la compilación
+    const distPath = path.resolve(currentDirname, 'dist');
+    app.use(express.static(distPath));
 
     app.get('*', (req, res) => {
-      res.sendFile(path.join(currentDirname, 'index.html'));
+      res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
