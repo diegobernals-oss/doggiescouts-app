@@ -10,7 +10,8 @@ import {
   X,
   QrCode,
   Sparkles,
-  Heart
+  Heart,
+  Instagram
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
