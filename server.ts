@@ -34,7 +34,7 @@ const pool = mysql.createPool({
 });
 
 // Inicialización de Google Gen AI
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 // Endpoint POST para guardar tickets
 app.post('/api/tickets', async (req, res) => {
