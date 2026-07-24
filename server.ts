@@ -74,7 +74,6 @@ app.get('/api/tickets', async (req, res) => {
   }
 });
 
-// Inicio del servidor
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -83,15 +82,16 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // Apuntar directamente al directorio actual en producción donde se empaqueta dist
-    app.use(express.static(__dirname));
+    // Apuntar correctamente a la carpeta dist consolidada en la raíz superior
+    const distPath = path.join(__dirname, '../dist');
+    app.use(express.static(distPath));
 
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'index.html'));
+      res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  app.listen(PORT, () => {
+  app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
   });
 }
